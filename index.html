@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>離れ — 副業オペレーション・コンソール｜ねぎみそとうふ</title>
+<meta name="description" content="副業の制作・発信・収益導線を一枚で見るための管理画面。稼働できる時間の総量、公開の滞り、導線の切れ目を、汎用ダッシュボードにはない部品で可視化しています。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://negimiso-tofu.github.io/hanare-console/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="離れ — 副業オペレーション・コンソール">
+<meta property="og:description" content="稼働時間の総量・公開の滞り・導線の切れ目を見るための管理画面。制作：ねぎみそとうふ">
+<meta property="og:url" content="https://negimiso-tofu.github.io/hanare-console/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-mode="demo">
+<a class="skip" href="#main">本文へ進む</a>
+
+<div class="app">
+
+  <!-- ============ 側柱 ============ -->
+  <aside class="pillar" aria-label="主な操作">
+    <div class="mark">
+      <span class="mark__lamp" aria-hidden="true"></span>
+      <span class="mark__name">離<i>Hanare</i></span>
+    </div>
+    <p class="mark__sub">Side Business<br>Operations Console</p>
+
+    <nav aria-label="画面">
+      <ul class="nav">
+        <li><a href="#main" aria-current="page"><span class="nav__ja">盤</span><span class="nav__en">Overview</span></a></li>
+        <li><a href="#works"><span class="nav__ja">仕事</span><span class="nav__en">Works</span></a></li>
+        <li><a href="#funnel"><span class="nav__ja">導線</span><span class="nav__en">Funnel</span></a></li>
+        <li><a href="#valves"><span class="nav__ja">栓</span><span class="nav__en">Blockers</span></a></li>
+        <li><a href="#tasks"><span class="nav__ja">作業</span><span class="nav__en">Tasks</span></a></li>
+        <li><a href="#log"><span class="nav__ja">記録</span><span class="nav__en">Log</span></a></li>
+      </ul>
+    </nav>
+
+    <div class="pillar__foot">
+      <p class="role" title="この画面での権限">権限：<b>編集</b></p>
+      <p class="tiny">閲覧／編集／管理の3段。削除はこの画面から行えません。</p>
+    </div>
+  </aside>
+
+  <!-- ============ 舞台 ============ -->
+  <div class="stage">
+
+    <header class="bar">
+      <p class="crumb"><span>離れ</span><span aria-hidden="true">/</span><b>盤</b></p>
+
+      <form class="seek" role="search" onsubmit="return false">
+        <label class="sr" for="q">画面内を探す</label>
+        <input id="q" type="search" placeholder="仕事・記事・導線を探す（/）" autocomplete="off">
+      </form>
+
+      <div class="bar__tools">
+        <div class="seg" role="group" aria-label="表示するデータ">
+          <button type="button" data-mode-set="demo" aria-pressed="true">データあり</button>
+          <button type="button" data-mode-set="empty" aria-pressed="false">空の状態</button>
+        </div>
+        <button type="button" class="lamp-btn" id="theme" aria-pressed="false">
+          <span aria-hidden="true">◐</span><span class="sr">昼と夜を切り替える</span><span class="lamp-btn__t">夜</span>
+        </button>
+        <p class="who"><b>ねぎみそとうふ</b><span>制作・運営</span></p>
+      </div>
+    </header>
+
+    <div class="frame">
+      <main id="main" tabindex="-1">
+
+        <!-- ---------- ① 縁側バー ---------- -->
+        <section class="engawa card" aria-labelledby="h-engawa">
+          <div class="card__head">
+            <h2 id="h-engawa" class="card__title">縁側 <small>今週、手を動かせる枠</small></h2>
+            <p class="card__note when-data"><b>14</b> / 24 枠が空いています</p>
+          </div>
+
+          <div class="when-data">
+            <ol class="week" aria-label="曜日ごとの空き枠">
+              <li class="week__day"><p class="week__label">月</p>
+                <ul class="slots"><li class="slot is-used" title="20時台：記事の下書き"></li><li class="slot is-used" title="21時台：記事の下書き"></li><li class="slot" title="22時台：空き"></li></ul></li>
+              <li class="week__day"><p class="week__label">火</p>
+                <ul class="slots"><li class="slot is-used"></li><li class="slot"></li><li class="slot"></li></ul></li>
+              <li class="week__day"><p class="week__label">水</p>
+                <ul class="slots"><li class="slot"></li><li class="slot"></li><li class="slot"></li></ul></li>
+              <li class="week__day"><p class="week__label">木</p>
+                <ul class="slots"><li class="slot is-used"></li><li class="slot is-used"></li><li class="slot"></li></ul></li>
+              <li class="week__day"><p class="week__label">金</p>
+                <ul class="slots"><li class="slot"></li><li class="slot"></li><li class="slot"></li></ul></li>
+              <li class="week__day is-wide"><p class="week__label">土</p>
+                <ul class="slots"><li class="slot is-used"></li><li class="slot is-used"></li><li class="slot is-used"></li><li class="slot"></li><li class="slot"></li><li class="slot"></li></ul></li>
+              <li class="week__day is-wide"><p class="week__label">日</p>
+                <ul class="slots"><li class="slot is-used"></li><li class="slot"></li><li class="slot"></li><li class="slot"></li><li class="slot"></li><li class="slot"></li></ul></li>
+            </ol>
+            <p class="legend"><span class="key key--used"></span>埋まっている<span class="key key--free"></span>空き　平日は夜3枠、週末は6枠で数えています</p>
+          </div>
+
+          <div class="when-empty empty">
+            <p class="empty__t">まだ枠を置いていません。</p>
+            <p class="empty__d">動ける曜日と時間帯を決めると、ここが今週の持ち時間になります。</p>
+          </div>
+        </section>
+
+        <!-- ---------- ② 要点（半畳×4） ---------- -->
+        <section class="tiles" aria-label="今週の要点">
+          <article class="tile card">
+            <p class="tile__k">空き枠</p>
+            <p class="tile__v when-data">14<small>/24</small></p>
+            <p class="tile__v when-empty">—</p>
+            <p class="tile__d when-data">先週より2枠多い</p>
+            <p class="tile__d when-empty">未設定</p>
+          </article>
+          <article class="tile card">
+            <p class="tile__k">公開できた仕事</p>
+            <p class="tile__v when-data">3<small>/8</small></p>
+            <p class="tile__v when-empty">0<small>/0</small></p>
+            <p class="tile__d when-data">5件が手元で止まっています</p>
+            <p class="tile__d when-empty">まだ登録がありません</p>
+          </article>
+          <article class="tile card is-andon">
+            <p class="tile__k">詰まっている件</p>
+            <p class="tile__v when-data">5</p>
+            <p class="tile__v when-empty">0</p>
+            <p class="tile__d when-data">うち3件は5分で解けます</p>
+            <p class="tile__d when-empty">詰まりはありません</p>
+          </article>
+          <article class="tile card">
+            <p class="tile__k">繋がった導線</p>
+            <p class="tile__v when-data">1<small>/4</small></p>
+            <p class="tile__v when-empty">0<small>/4</small></p>
+            <p class="tile__d when-data">報酬までは未接続</p>
+            <p class="tile__d when-empty">1本目はまだ</p>
+          </article>
+        </section>
+
+        <!-- ---------- ③ 公開レール ---------- -->
+        <section id="works" class="card rail" aria-labelledby="h-rail">
+          <div class="card__head">
+            <h2 id="h-rail" class="card__title">公開レール <small>左から右へ、進み方はひとつだけ</small></h2>
+            <p class="card__note">札をつかんで動かす想定の画面です（デモでは表示のみ）</p>
+          </div>
+
+          <div class="when-data lanes">
+            <section class="lane" aria-labelledby="lane-1">
+              <h3 id="lane-1" class="lane__h">手元にある<span class="lane__n">3</span></h3>
+              <ul class="fuda-list">
+                <li class="fuda"><p class="fuda__t">珈琲店「灯」のLP</p><p class="fuda__m">制作 ・ 骨子まで</p><p class="fuda__tag">画像待ち</p></li>
+                <li class="fuda"><p class="fuda__t">歯科医院サイト</p><p class="fuda__m">制作 ・ 構成のみ</p></li>
+                <li class="fuda"><p class="fuda__t">読書記録アプリ</p><p class="fuda__m">道具 ・ 試作</p></li>
+              </ul>
+            </section>
+            <section class="lane" aria-labelledby="lane-2">
+              <h3 id="lane-2" class="lane__h">出していない<span class="lane__n">2</span></h3>
+              <ul class="fuda-list">
+                <li class="fuda is-stuck"><p class="fuda__t">工務店サイト</p><p class="fuda__m">制作 ・ 完成済み</p><p class="fuda__tag fuda__tag--warn">手元だけ・12日</p></li>
+                <li class="fuda is-stuck"><p class="fuda__t">宿のサイト</p><p class="fuda__m">制作 ・ 完成済み</p><p class="fuda__tag fuda__tag--warn">手元だけ・8日</p></li>
+              </ul>
+            </section>
+            <section class="lane" aria-labelledby="lane-3">
+              <h3 id="lane-3" class="lane__h">公開している<span class="lane__n">3</span></h3>
+              <ul class="fuda-list">
+                <li class="fuda is-live"><p class="fuda__t">鮨屋のサイト</p><p class="fuda__m">制作 ・ 公開中</p><p class="fuda__tag fuda__tag--ok">見られる</p></li>
+                <li class="fuda is-live"><p class="fuda__t">読み物ページ</p><p class="fuda__m">制作 ・ 公開中</p><p class="fuda__tag fuda__tag--ok">見られる</p></li>
+                <li class="fuda is-live"><p class="fuda__t">士業事務所サイト</p><p class="fuda__m">制作 ・ 公開中</p><p class="fuda__tag fuda__tag--ok">見られる</p></li>
+              </ul>
+            </section>
+          </div>
+
+          <div class="when-empty empty">
+            <p class="empty__t">まだ札がありません。</p>
+            <p class="empty__d">作りかけを1つ登録すると、左端の「手元にある」から始まります。</p>
+          </div>
+        </section>
+
+        <!-- ---------- ④ 導線図 ＋ ⑤ 栓 ---------- -->
+        <div class="pair">
+
+          <section id="funnel" class="card funnel" aria-labelledby="h-funnel">
+            <div class="card__head">
+              <h2 id="h-funnel" class="card__title">導線 <small>数字より先に、線が繋がっているか</small></h2>
+            </div>
+
+            <div class="when-data">
+              <svg class="flow" viewBox="0 0 640 150" role="img" aria-labelledby="flow-t flow-d">
+                <title id="flow-t">発信から報酬までの接続状況</title>
+                <desc id="flow-d">4つの節点のうち、繋がっているのは最初の1本だけです。記事からASP、ASPから報酬は未接続です。</desc>
+                <line class="flow__link is-on"  x1="92"  y1="62" x2="236" y2="62"></line>
+                <line class="flow__link is-off" x1="316" y1="62" x2="460" y2="62"></line>
+                <line class="flow__link is-off" x1="540" y1="62" x2="612" y2="62" stroke-dasharray="4 5"></line>
+                <g class="node is-on">
+                  <circle cx="52" cy="62" r="26"></circle><text x="52" y="67">発信</text>
+                  <text class="node__c" x="52" y="112">週2枚のピン</text>
+                </g>
+                <g class="node is-on">
+                  <circle cx="276" cy="62" r="26"></circle><text x="276" y="67">記事</text>
+                  <text class="node__c" x="276" y="112">下書き4本 / 公開0</text>
+                </g>
+                <g class="node is-off">
+                  <circle cx="500" cy="62" r="26"></circle><text x="500" y="67">ASP</text>
+                  <text class="node__c" x="500" y="112">未登録</text>
+                </g>
+                <g class="node is-off">
+                  <circle cx="612" cy="62" r="18"></circle>
+                  <text class="node__c" x="606" y="112">報酬</text>
+                </g>
+              </svg>
+              <p class="funnel__say"><b>切れているのは記事とASPの間です。</b>登録そのものは5分。ここが繋がるまで、上流の数字は意味を持ちません。</p>
+            </div>
+
+            <div class="when-empty empty">
+              <p class="empty__t">まだ1本も繋がっていません。</p>
+              <p class="empty__d">最初の線は「発信」から。媒体をひとつ決めるところから始まります。</p>
+            </div>
+          </section>
+
+          <section id="valves" class="card valves" aria-labelledby="h-valves">
+            <div class="card__head">
+              <h2 id="h-valves" class="card__title">栓 <small>棒の長さ＝止めている件数</small></h2>
+            </div>
+
+            <div class="when-data">
+              <ul class="valve-list">
+                <li class="valve">
+                  <p class="valve__t">使っている道具の棚卸し<span class="chip chip--min">5分</span></p>
+                  <p class="valve__bar"><i style="--w:100%"></i><b>4件</b></p>
+                  <p class="valve__d">記事3本と紹介の棚が、この回答を待っています</p>
+                </li>
+                <li class="valve">
+                  <p class="valve__t">公開先の口座をつくる<span class="chip chip--min">10分</span></p>
+                  <p class="valve__bar"><i style="--w:75%"></i><b>3件</b></p>
+                  <p class="valve__d">出せていない完成品2件が、ここで止まっています</p>
+                </li>
+                <li class="valve">
+                  <p class="valve__t">屋号の表示名を決める<span class="chip chip--min">5分</span></p>
+                  <p class="valve__bar"><i style="--w:50%"></i><b>2件</b></p>
+                  <p class="valve__d">3媒体で名前を揃えるまで、発信を始められません</p>
+                </li>
+                <li class="valve">
+                  <p class="valve__t">下書きの仕上げ</p>
+                  <p class="valve__bar"><i style="--w:25%"></i><b>1件</b></p>
+                  <p class="valve__d">4本のうち1本は、あと30分で出せます</p>
+                </li>
+              </ul>
+            </div>
+
+            <div class="when-empty empty">
+              <p class="empty__t">詰まりはありません。</p>
+              <p class="empty__d">手が空いているなら、レールの左端から1つ進めるのがよい頃合いです。</p>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- ---------- 作業一覧 ---------- -->
+        <section id="tasks" class="card" aria-labelledby="h-tasks">
+          <div class="card__head">
+            <h2 id="h-tasks" class="card__title">作業 <small>期限の近い順</small></h2>
+            <label class="toggle"><input type="checkbox" id="only-stuck"><span>止まっているものだけ</span></label>
+          </div>
+
+          <div class="when-data tablewrap">
+            <table class="grid">
+              <caption class="sr">作業の一覧。状態を変更できます。</caption>
+              <thead>
+                <tr><th scope="col">作業</th><th scope="col">区分</th><th scope="col">担当</th><th scope="col">状態</th><th scope="col">期限</th><th scope="col">効き目</th></tr>
+              </thead>
+              <tbody>
+                <tr data-stuck="true">
+                  <th scope="row">使っている道具の棚卸し</th><td>紹介</td><td><span class="chip chip--self">自分</span></td>
+                  <td><select class="state" aria-label="状態" data-v="未着手"><option>未着手</option><option>進行</option><option>確認待ち</option><option selected>未着手</option><option>完了</option></select></td>
+                  <td><span class="due due--over">3日超過</span></td><td>下流4件</td>
+                </tr>
+                <tr data-stuck="true">
+                  <th scope="row">公開先の口座をつくる</th><td>基盤</td><td><span class="chip chip--self">自分</span></td>
+                  <td><select class="state" aria-label="状態" data-v="未着手"><option selected>未着手</option><option>進行</option><option>確認待ち</option><option>完了</option></select></td>
+                  <td><span class="due due--near">あと12日</span></td><td>下流3件</td>
+                </tr>
+                <tr data-stuck="false">
+                  <th scope="row">工務店サイトの意匠</th><td>制作</td><td><span class="chip">外部</span></td>
+                  <td><select class="state" aria-label="状態" data-v="確認待ち"><option>未着手</option><option>進行</option><option selected>確認待ち</option><option>完了</option></select></td>
+                  <td><span class="due due--near">あと12日</span></td><td>—</td>
+                </tr>
+                <tr data-stuck="false">
+                  <th scope="row">宿サイトの挿絵10枚</th><td>制作</td><td><span class="chip">外部</span></td>
+                  <td><select class="state" aria-label="状態" data-v="進行"><option>未着手</option><option selected>進行</option><option>確認待ち</option><option>完了</option></select></td>
+                  <td><span class="due">—</span></td><td>—</td>
+                </tr>
+                <tr data-stuck="true">
+                  <th scope="row">屋号の表示名を3媒体で揃える</th><td>基盤</td><td><span class="chip chip--self">自分</span></td>
+                  <td><select class="state" aria-label="状態" data-v="未着手"><option selected>未着手</option><option>進行</option><option>確認待ち</option><option>完了</option></select></td>
+                  <td><span class="due">—</span></td><td>下流2件</td>
+                </tr>
+                <tr data-stuck="false">
+                  <th scope="row">下書き1本を仕上げて出す</th><td>記事</td><td><span class="chip chip--self">自分</span></td>
+                  <td><select class="state" aria-label="状態" data-v="進行"><option>未着手</option><option selected>進行</option><option>確認待ち</option><option>完了</option></select></td>
+                  <td><span class="due">—</span></td><td>導線の1本目</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="when-empty empty">
+            <p class="empty__t">作業がありません。</p>
+            <p class="empty__d">レールの札を選ぶと、そこから作業が生まれます。</p>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- ---------- 右の間 ---------- -->
+      <aside class="side" aria-label="今夜の見立て">
+
+        <section class="card side__card">
+          <h2 class="card__title">今夜の一手</h2>
+          <div class="when-data">
+            <p class="pick">道具の棚卸しを<br><b>5分</b>で終わらせる</p>
+            <p class="pick__d">これ1つで、止まっている4件が同時に動きます。今夜の空き枠は3つ。</p>
+            <button class="btn" type="button">この1件から始める</button>
+          </div>
+          <div class="when-empty empty">
+            <p class="empty__t">見立てるものがありません。</p>
+            <p class="empty__d">仕事を1つ登録すると、ここに次の一手が出ます。</p>
+          </div>
+        </section>
+
+        <section class="card side__card">
+          <h2 class="card__title">近い期限</h2>
+          <ul class="when-data dates">
+            <li><span class="dates__d">09/28</span><span class="dates__t">レビュー — 公開URLを見せる</span><span class="dates__n">あと12日</span></li>
+            <li><span class="dates__d">09/30</span><span class="dates__t">記事の置き場をつくる</span><span class="dates__n">あと14日</span></li>
+            <li><span class="dates__d">12/15</span><span class="dates__t">紹介の申請（記事10本）</span><span class="dates__n">あと90日</span></li>
+          </ul>
+          <div class="when-empty empty"><p class="empty__t">期限はありません。</p></div>
+        </section>
+
+        <section id="log" class="card side__card">
+          <h2 class="card__title">記録</h2>
+          <ol class="when-data log">
+            <li><b>09/14</b> 宿サイトの構成を終えた</li>
+            <li><b>09/13</b> 工務店サイトの表示確認（不具合0）</li>
+            <li><b>09/11</b> 士業サイトを公開した</li>
+            <li><b>09/10</b> 屋号の置き場をつくった</li>
+          </ol>
+          <div class="when-empty empty"><p class="empty__t">まだ記録がありません。</p><p class="empty__d">1件終えるごとに、ここに積み上がります。</p></div>
+        </section>
+
+        <p class="side__note">この画面は外部へ何も送信しません。保存はこの端末の中だけです。</p>
+      </aside>
+    </div>
+
+    <footer class="foot">
+      <p>制作：<b>ねぎみそとうふ</b>　架空のデータによる制作見本です。実在の個人・団体とは関係ありません。</p>
+      <p class="tiny">外部通信なし／CDN不使用／削除操作なし。キーボードは <kbd>/</kbd> で検索、<kbd>Esc</kbd> で解除。</p>
+    </footer>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden>
+  <span id="toast-msg"></span>
+  <button type="button" id="toast-undo">取り消す</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

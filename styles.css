@@ -1,0 +1,388 @@
+@charset "utf-8";
+/* ==========================================================================
+   離れ（Hanare）— Side Business Operations Console
+   --------------------------------------------------------------------------
+   このファイルは2層に分かれています。
+
+   [A] 骨格レイヤー  … 変数名・レイアウト・アクセシビリティ。**書き換えない**
+   [B] 意匠レイヤー  … 色の調律・文字組・余白の詰め・図の描き込み。**ここを仕上げる**
+
+   意匠の担当（Codex）は [B] だけを触ってください。
+   [A] の変数名・クラス名・構造を変えると、実データ版への移植ができなくなります。
+   ========================================================================== */
+
+
+/* ==========================================================================
+   [A] 骨格レイヤー — トークン
+   ========================================================================== */
+:root{
+  /* 色（昼） */
+  --ground:#F2EEE4;      /* 生成り：ページ地 */
+  --sheet:#FBF9F4;       /* 白練：カード地 */
+  --sheet-2:#F6F2E8;     /* 一段沈めた面 */
+  --ink:#1E1C19;         /* 炭 */
+  --ink-mute:#6A655B;    /* 鈍色 */
+  --rule:#DFD8C6;        /* 格子 */
+  --rule-soft:#EBE5D7;
+
+  --koke:#3D6B52;        /* 苔：主色 */
+  --wakatake:#5F9C79;    /* 若竹：良 */
+  --ai:#2B4A6F;          /* 藍：情報 */
+  --yamabuki:#C08A22;    /* 山吹：待ち */
+  --kaki:#AE5029;        /* 柿渋：詰まり */
+  --andon:255 190 90;    /* 行灯の灯り（rgb成分） */
+
+  /* 寸法：4px基準。この6つ以外の余白を作らない */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s6:24px; --s8:32px;
+
+  /* 角丸は2pxだけ。SaaS風の大きな丸みを持ち込まない */
+  --r:2px; --r-chip:4px;
+
+  /* 影は使わない。階層は線と地色差で作る */
+  --lift:none;
+  --pop:0 2px 14px rgba(30,28,25,.16);
+
+  --pillar-w:232px;
+  --side-w:300px;
+  --maxw:1440px;
+}
+
+/* 夜 */
+[data-theme="night"]{
+  --ground:#17161A;
+  --sheet:#1F2125;
+  --sheet-2:#1A1C20;
+  --ink:#EBE5D8;
+  --ink-mute:#9A948A;
+  --rule:#33353B;
+  --rule-soft:#2A2C31;
+  --koke:#6FA98A;
+  --wakatake:#7FBD9A;
+  --ai:#7FA3CC;
+  --yamabuki:#D9A441;
+  --kaki:#D9724A;
+  --pop:0 2px 18px rgba(0,0,0,.5);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{color-scheme:light}
+[data-theme="night"]{color-scheme:dark}
+
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Yu Gothic UI","Yu Gothic","Hiragino Kaku Gothic ProN",system-ui,sans-serif;
+  font-size:13.5px; line-height:1.75; letter-spacing:.01em;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:"Noto Serif JP","Yu Mincho","Hiragino Mincho ProN",serif; font-weight:600; letter-spacing:.05em; margin:0}
+p,ul,ol{margin:0}
+ul,ol{list-style:none; padding:0}
+a{color:inherit; text-decoration:none}
+button,input,select{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--ai); outline-offset:2px}
+.sr{position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0}
+.skip{position:absolute; left:var(--s3); top:-60px; z-index:50; background:var(--sheet); border:1px solid var(--rule); padding:var(--s2) var(--s4); border-radius:var(--r); transition:top .15s}
+.skip:focus{top:var(--s3)}
+.tiny{font-size:11px; color:var(--ink-mute); line-height:1.6}
+
+/* ==========================================================================
+   [A] 骨格レイヤー — 間取り
+   ========================================================================== */
+.app{display:grid; grid-template-columns:var(--pillar-w) minmax(0,1fr); min-height:100vh; max-width:var(--maxw); margin-inline:auto}
+.stage{display:flex; flex-direction:column; min-width:0; border-left:1px solid var(--rule)}
+.frame{display:grid; grid-template-columns:minmax(0,1fr) var(--side-w); gap:var(--s3); padding:var(--s3); align-items:start}
+main{display:flex; flex-direction:column; gap:var(--s3); min-width:0}
+main:focus{outline:none}
+
+/* 畳割り：カードは半畳(1:1)・一畳(2:1)・二畳(4:1)の3種類だけ */
+.tiles{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:var(--s3)}
+.pair{display:grid; grid-template-columns:minmax(0,7fr) minmax(0,5fr); gap:var(--s3)}
+.lanes{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--s3)}
+
+/* 画面幅の対応はファイル末尾にまとめてあります（後勝ちのため最後に置くこと） */
+
+/* ==========================================================================
+   [B] 意匠レイヤー — ここから下が仕上げの対象
+   ========================================================================== */
+
+/* -------- 第1段：色・文字組・罫線の調律 -------- */
+:root{
+  --ground:#EEEADF;
+  --sheet:#FAF8F1;
+  --sheet-2:#F2EEE3;
+  --ink:#252820;
+  --ink-mute:#5E6155;
+  --rule:#C9C8B8;
+  --rule-soft:#DFDED0;
+  --koke:#3E624C;
+  --yamabuki:#806018;
+  --kaki:#924A2C;
+}
+[data-theme="night"]{
+  --ground:#181C1A;
+  --sheet:#222823;
+  --sheet-2:#1D221E;
+  --ink:#EDE9DC;
+  --ink-mute:#B2B5A8;
+  --rule:#4D584C;
+  --rule-soft:#364137;
+  --koke:#A1C2A4;
+  --yamabuki:#E2BB70;
+  --kaki:#E6A378;
+}
+body{line-height:1.8; letter-spacing:.025em}
+h1,h2,h3{letter-spacing:.08em; line-height:1.65}
+/* 等幅の数字と和文の見出しを、同じ明朝の系統で揃える */
+.tile__v,.lane__n,.dates__d,.pick b{
+  font-family:"Noto Serif JP","Yu Mincho","Hiragino Mincho ProN",serif;
+  font-variant-numeric:lining-nums tabular-nums;
+}
+[data-theme="night"] .seg button[aria-pressed="true"],
+[data-theme="night"] .btn{color:var(--ground)}
+/* 分割ボタンの外枠に隠れない、同じ太さのフォーカス線 */
+.seg button:focus-visible{outline-offset:-2px}
+
+/* -------- 側柱 -------- */
+.pillar{
+  position:sticky; top:0; height:100vh; padding:var(--s6) var(--s4);
+  background:var(--sheet-2); border-right:1px solid var(--rule);
+  display:flex; flex-direction:column; gap:var(--s6);
+}
+.mark{display:flex; align-items:center; gap:var(--s3)}
+.mark__lamp{
+  width:26px; height:34px; border:1px solid var(--rule); border-radius:var(--r);
+  background:
+    radial-gradient(circle at 50% 62%, rgb(var(--andon)/.55), transparent 62%),
+    linear-gradient(180deg, var(--sheet), var(--sheet-2));
+  position:relative; flex:none;
+}
+.mark__lamp::after{content:""; position:absolute; inset:var(--s2) var(--s1); border:1px solid var(--rule-soft)}
+.mark__name{font-family:"Noto Serif JP","Yu Mincho",serif; font-size:22px; letter-spacing:.14em; line-height:1}
+.mark__name i{display:block; font-style:normal; font-size:9.5px; letter-spacing:.3em; color:var(--ink-mute); font-family:system-ui,sans-serif; margin-top:var(--s1)}
+.mark__sub{font-size:10.5px; letter-spacing:.14em; color:var(--ink-mute); line-height:1.7}
+
+.nav li+li{margin-top:var(--s1)}
+.nav a{display:flex; align-items:baseline; gap:var(--s3); padding:var(--s2) var(--s3); border-radius:var(--r); border-left:2px solid transparent}
+.nav a:hover{background:var(--sheet)}
+.nav a[aria-current="page"]{background:var(--sheet); border-left-color:var(--koke)}
+.nav__ja{font-family:"Noto Serif JP","Yu Mincho",serif; font-size:15px; letter-spacing:.1em; min-width:2.2em}
+.nav__en{font-size:10px; letter-spacing:.12em; color:var(--ink-mute); text-transform:uppercase}
+
+.pillar__foot{margin-top:auto; border-top:1px solid var(--rule); padding-top:var(--s3)}
+.role{font-size:11.5px; color:var(--ink-mute)}
+.role b{color:var(--ink)}
+
+/* -------- 上の帯 -------- */
+.bar{
+  display:flex; align-items:center; gap:var(--s4);
+  padding:var(--s3) var(--s4); border-bottom:1px solid var(--rule);
+  background:var(--sheet); position:sticky; top:0; z-index:20;
+}
+.crumb{display:flex; gap:var(--s2); align-items:baseline; font-size:11.5px; color:var(--ink-mute); letter-spacing:.08em}
+.crumb b{font-family:"Noto Serif JP","Yu Mincho",serif; font-size:15px; color:var(--ink); font-weight:600}
+.seek{flex:1 1 220px; max-width:420px}
+.seek input{
+  width:100%; padding:var(--s2) var(--s3); background:var(--sheet-2);
+  border:1px solid var(--rule); border-radius:var(--r); font-size:12.5px;
+}
+.seek input::placeholder{color:var(--ink-mute)}
+.bar__tools{display:flex; align-items:center; gap:var(--s3); margin-left:auto}
+
+.seg{display:inline-flex; border:1px solid var(--rule); border-radius:var(--r); overflow:hidden}
+.seg button{background:var(--sheet); border:0; padding:var(--s1) var(--s3); font-size:11.5px; cursor:pointer; letter-spacing:.06em}
+.seg button+button{border-left:1px solid var(--rule)}
+.seg button[aria-pressed="true"]{background:var(--koke); color:#FBF9F4}
+.lamp-btn{display:inline-flex; align-items:center; gap:var(--s1); background:var(--sheet); border:1px solid var(--rule); border-radius:var(--r); padding:var(--s1) var(--s2); font-size:11.5px; cursor:pointer}
+.lamp-btn[aria-pressed="true"]{border-color:var(--yamabuki); background:rgb(var(--andon)/.12)}
+.who{text-align:right; font-size:10.5px; color:var(--ink-mute); line-height:1.4}
+.who b{display:block; font-size:12.5px; color:var(--ink); letter-spacing:.04em}
+
+/* -------- 札板（カード） -------- */
+.card{background:var(--sheet); border:1px solid var(--rule); border-radius:var(--r); padding:var(--s4)}
+.card__head{display:flex; align-items:baseline; gap:var(--s3); flex-wrap:wrap; margin-bottom:var(--s3); padding-bottom:var(--s2); border-bottom:1px solid var(--rule-soft)}
+.card__title{font-size:17px}
+.card__title small{font-family:"Yu Gothic UI",system-ui,sans-serif; font-size:11px; font-weight:400; color:var(--ink-mute); letter-spacing:.04em; margin-left:var(--s2)}
+.card__note{margin-left:auto; font-size:11.5px; color:var(--ink-mute)}
+.card__note b{font-size:15px; color:var(--koke); font-variant-numeric:tabular-nums}
+
+/* -------- ① 縁側バー -------- */
+.week{display:grid; grid-template-columns:repeat(5,1fr) 1.6fr 1.6fr; gap:var(--s2)}
+.week__label{font-family:"Noto Serif JP","Yu Mincho",serif; font-size:12px; color:var(--ink-mute); margin-bottom:var(--s1); padding-bottom:var(--s1); border-bottom:1px solid var(--rule-soft); letter-spacing:.1em}
+.slots{display:flex; gap:var(--s1)}
+.slot{flex:1; height:var(--s8); border:1px solid var(--rule); border-radius:1px; background:
+  repeating-linear-gradient(135deg, var(--rule-soft) 0 1px, var(--sheet) 1px var(--s2))}
+.slot.is-used{background:var(--koke); border-color:var(--koke)}
+.legend{margin-top:var(--s3); font-size:11px; color:var(--ink-mute); display:flex; align-items:center; gap:var(--s2)}
+.key{width:14px; height:10px; border:1px solid var(--rule); display:inline-block}
+.key--used{background:var(--koke); border-color:var(--koke)}
+.key--free{background:repeating-linear-gradient(135deg,var(--rule-soft) 0 1px,var(--sheet) 1px var(--s2)); margin-left:var(--s3)}
+
+/* -------- ② 半畳タイル -------- */
+.tile{display:flex; flex-direction:column; justify-content:space-between; aspect-ratio:1/1; min-height:132px; position:relative; isolation:isolate; overflow:hidden}
+.tile__k{font-size:11px; letter-spacing:.1em; color:var(--ink-mute)}
+.tile__v{font-family:"Noto Serif JP","Yu Mincho",serif; font-size:40px; font-weight:500; line-height:1.1; letter-spacing:-.035em; font-variant-numeric:lining-nums tabular-nums}
+.tile__v small{font-family:"Yu Gothic UI","Yu Gothic",system-ui,sans-serif; font-size:12px; font-weight:400; letter-spacing:.02em; color:var(--ink-mute); margin-left:var(--s1)}
+.tile__d{font-size:11.5px; color:var(--ink-mute)}
+/* 行灯：赤ベタを使わず、隅からにじませる */
+.tile.is-andon::after{
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:radial-gradient(ellipse at 0 100%, rgb(var(--andon)/.10), transparent 72%); pointer-events:none;
+}
+.tile.is-andon .tile__v{color:var(--kaki)}
+
+/* -------- ③ 公開レール -------- */
+.lane{background:var(--sheet-2); border:1px solid var(--rule-soft); border-radius:var(--r); padding:var(--s3)}
+.lane__h{padding-bottom:var(--s2); border-bottom:1px solid var(--rule); font-size:12.5px; letter-spacing:.08em; display:flex; justify-content:space-between; align-items:baseline; margin-bottom:var(--s2); color:var(--ink-mute)}
+.lane__n{font-family:"Noto Serif JP","Yu Mincho","Hiragino Mincho ProN",serif; font-size:16px; color:var(--ink)}
+.fuda-list{display:flex; flex-direction:column; gap:var(--s2)}
+.fuda{position:relative; background:linear-gradient(180deg,var(--sheet),var(--sheet-2)); border:1px solid var(--rule); border-left:1px solid var(--rule); border-radius:var(--r); padding:var(--s2) var(--s3)}
+.fuda__t{font-size:13px; font-weight:600}
+.fuda__m{font-size:11px; color:var(--ink-mute)}
+.fuda__tag{display:inline-block; margin-top:var(--s1); font-size:10.5px; padding:0 var(--s2); border:1px solid var(--rule); border-radius:var(--r-chip); color:var(--ink-mute)}
+.fuda__tag--warn{color:var(--kaki); border-color:var(--kaki)}
+.fuda__tag--ok{color:var(--koke); border-color:var(--koke)}
+.fuda.is-stuck{border-left-color:var(--kaki); background:
+  radial-gradient(ellipse at 0 50%, rgb(var(--andon)/.10), transparent 70%), linear-gradient(180deg,var(--sheet),var(--sheet-2))}
+.fuda.is-live{border-left-color:var(--koke)}
+
+/* -------- ④ 導線図 -------- */
+.flow{width:100%; height:auto; display:block}
+.flow__link{stroke:var(--rule); stroke-width:1; stroke-linecap:butt; vector-effect:non-scaling-stroke}
+.flow__link.is-on{stroke:var(--koke)}
+.flow__link.is-off{stroke:var(--yamabuki); stroke-dasharray:var(--s2) var(--s1); stroke-dashoffset:var(--s1)}
+.node circle{fill:var(--sheet-2); stroke:var(--rule); stroke-width:1; vector-effect:non-scaling-stroke}
+.node text{font-family:"Noto Serif JP","Yu Mincho",serif; font-size:13px; text-anchor:middle; fill:var(--ink)}
+.node .node__c{font-family:"Yu Gothic UI",system-ui,sans-serif; font-size:10.5px; fill:var(--ink-mute)}
+.node.is-on circle{stroke:var(--koke); fill:color-mix(in srgb, var(--koke) 5%, var(--sheet))}
+.node.is-off circle{stroke:var(--yamabuki); stroke-dasharray:var(--s1) var(--s1); stroke-dashoffset:2px}
+.funnel__say{margin-top:var(--s2); font-size:12px; color:var(--ink-mute); border-top:1px solid var(--rule-soft); padding-top:var(--s2)}
+.funnel__say b{color:var(--ink)}
+
+/* -------- ⑤ 栓 -------- */
+.valve-list{display:flex; flex-direction:column; gap:var(--s3)}
+.valve+.valve{border-top:1px solid var(--rule-soft); padding-top:var(--s3)}
+.valve__t{font-size:12.5px; font-weight:600; display:flex; align-items:center; gap:var(--s2)}
+/* 全行で同じ目盛り幅を確保し、件数表示を棒の長さから切り離す */
+.valve__bar{display:grid; grid-template-columns:minmax(0,1fr) 3ch; align-items:center; gap:var(--s2); margin:var(--s2) 0}
+.valve__bar::before,.valve__bar::after{content:""; grid-column:1; grid-row:1; height:var(--s3); pointer-events:none}
+.valve__bar::before{background:var(--sheet-2); border:1px solid var(--rule); border-radius:1px}
+.valve__bar::after{z-index:1; background:repeating-linear-gradient(90deg,transparent 0 calc(25% - 1px),var(--rule) calc(25% - 1px) 25%)}
+.valve__bar i{display:block; grid-column:1; grid-row:1; height:var(--s2); width:var(--w); background:var(--kaki); border-radius:1px}
+.valve__bar b{grid-column:2; grid-row:1; white-space:nowrap; text-align:right; font-size:11.5px; color:var(--ink-mute); font-variant-numeric:tabular-nums}
+.valve__d{font-size:11px; color:var(--ink-mute)}
+.chip{display:inline-block; font-size:10.5px; padding:0 var(--s2); border:1px solid var(--rule); border-radius:var(--r-chip); color:var(--ink-mute); white-space:nowrap}
+.chip--min{border-color:var(--yamabuki); color:var(--yamabuki)}
+.chip--self{border-color:var(--koke); color:var(--koke)}
+
+/* -------- 表 -------- */
+.tablewrap{overflow-x:auto}
+.grid{border-collapse:collapse; width:100%; min-width:640px}
+.grid th,.grid td{text-align:left; padding:var(--s2) var(--s3); border-bottom:1px solid var(--rule-soft); font-weight:400; font-size:12.5px; vertical-align:middle}
+.grid thead th{font-size:10.5px; letter-spacing:.1em; color:var(--ink-mute); border-bottom:1px solid var(--rule); background:var(--sheet-2); position:sticky; top:0}
+.grid tbody th{font-weight:600}
+.grid tbody tr:hover{background:var(--sheet-2)}
+.state{padding:var(--s1) var(--s2); border:1px solid var(--rule); border-radius:var(--r-chip); background:var(--sheet); font-size:11.5px; cursor:pointer}
+.state[data-v="完了"]{border-color:var(--koke); color:var(--koke)}
+.state[data-v="進行"]{border-color:var(--ai); color:var(--ai)}
+.state[data-v="確認待ち"]{border-color:var(--yamabuki); color:var(--yamabuki)}
+.due{font-size:11.5px; color:var(--ink-mute); font-variant-numeric:tabular-nums}
+.due--near{color:var(--yamabuki)}
+.due--over{color:var(--kaki); font-weight:600}
+.toggle{margin-left:auto; display:inline-flex; align-items:center; gap:var(--s1); font-size:11.5px; color:var(--ink-mute); cursor:pointer}
+.toggle input{accent-color:var(--koke)}
+
+/* -------- 右の間 -------- */
+.side{display:flex; flex-direction:column; gap:var(--s3)}
+.side__card .card__title{font-size:14px; margin-bottom:var(--s2); padding-bottom:var(--s2); border-bottom:1px solid var(--rule-soft)}
+.pick{font-family:"Noto Serif JP","Yu Mincho",serif; font-size:17px; line-height:1.6}
+.pick b{font-size:26px; color:var(--koke)}
+.pick__d{font-size:11.5px; color:var(--ink-mute); margin:var(--s2) 0 var(--s3)}
+.btn{width:100%; padding:var(--s2) var(--s3); background:var(--koke); color:#FBF9F4; border:1px solid var(--koke); border-radius:var(--r); font-size:12.5px; letter-spacing:.06em; cursor:pointer}
+.btn:hover{background:color-mix(in srgb, var(--koke) 85%, #000)}
+.dates li{display:grid; grid-template-columns:auto 1fr auto; gap:var(--s2); align-items:baseline; padding:var(--s2) 0; border-bottom:1px solid var(--rule-soft); font-size:11.5px}
+.dates li:last-child{border-bottom:0}
+.dates__d{font-family:"Noto Serif JP","Yu Mincho","Hiragino Mincho ProN",serif; font-size:13px; font-variant-numeric:tabular-nums}
+.dates__n{color:var(--ink-mute); font-size:10.5px}
+.log li{font-size:11.5px; color:var(--ink-mute); padding:var(--s1) 0}
+.log b{color:var(--ink); margin-right:var(--s2); font-variant-numeric:tabular-nums}
+.side__note{font-size:10.5px; color:var(--ink-mute); line-height:1.7; padding:0 var(--s2)}
+
+/* -------- 空の状態 -------- */
+.empty{padding:var(--s6) var(--s4); text-align:center; border:1px dashed var(--rule); border-radius:var(--r); background:var(--sheet-2)}
+.empty__t{font-family:"Noto Serif JP","Yu Mincho",serif; font-size:14px}
+.empty__d{font-size:11.5px; color:var(--ink-mute); margin-top:var(--s1)}
+body[data-mode="demo"] .when-empty{display:none}
+body[data-mode="empty"] .when-data{display:none}
+/* 詰まりが0件のときに行灯を灯さない */
+body[data-mode="empty"] .tile.is-andon::after{display:none}
+body[data-mode="empty"] .tile.is-andon .tile__v{color:var(--ink)}
+
+/* -------- 足もと・報せ -------- */
+.foot{border-top:1px solid var(--rule); padding:var(--s4); font-size:11.5px; color:var(--ink-mute); background:var(--sheet)}
+.foot b{color:var(--ink)}
+kbd{border:1px solid var(--rule); border-bottom-width:1px; border-radius:var(--r-chip); padding:0 var(--s1); font-size:10.5px}
+.toast{
+  position:fixed; left:50%; bottom:var(--s6); transform:translateX(-50%);
+  display:flex; align-items:center; gap:var(--s3);
+  background:var(--ink); color:var(--ground); padding:var(--s2) var(--s4);
+  border-radius:var(--r); box-shadow:var(--pop); font-size:12.5px; z-index:40;
+}
+.toast button{background:none; border:1px solid currentColor; border-radius:var(--r-chip); padding:var(--s1) var(--s2); font-size:11.5px; cursor:pointer}
+/* hidden属性を display:flex より強く効かせる（初期表示で出さない） */
+.toast[hidden],.toast button[hidden]{display:none}
+
+/* 第2段：札の留めと、半畳の隅を示す細い罫線。文字や意味は追加しない */
+.fuda::after{content:""; position:absolute; top:var(--s1); right:var(--s2); width:var(--s3); border-top:1px solid var(--rule); pointer-events:none}
+.fuda.is-stuck::after{border-color:var(--yamabuki)}
+.tile::before{content:""; position:absolute; top:var(--s2); right:var(--s2); width:var(--s2); height:var(--s2); border-top:1px solid var(--rule); border-right:1px solid var(--rule); pointer-events:none}
+/* ==========================================================================
+   [A] 骨格レイヤー — 画面幅の対応
+   --------------------------------------------------------------------------
+   **このブロックはファイルの末尾に置いたままにしてください。**
+   意匠レイヤーより前に置くと、同じ強さの指定に上書きされて効かなくなります。
+   ========================================================================== */
+@media (max-width:1200px){
+  .frame{grid-template-columns:minmax(0,1fr)}
+  .side{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--s3); align-items:start}
+  .side__note{grid-column:1/-1}
+}
+@media (max-width:900px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .stage{border-left:none}
+  .pillar{
+    position:static; height:auto; flex-direction:row; align-items:center; flex-wrap:wrap;
+    gap:var(--s3) var(--s4); padding:var(--s3) var(--s4);
+    border-right:none; border-bottom:1px solid var(--rule);
+  }
+  .mark__sub,.pillar__foot{display:none}
+  .pillar nav{flex:1 1 100%}
+  .nav{display:flex; flex-wrap:wrap; gap:var(--s1)}
+  .nav li+li{margin-top:0}
+  .nav a{gap:var(--s2); padding:var(--s1) var(--s3); border-left:0; border-bottom:2px solid transparent}
+  .nav a[aria-current="page"]{border-left:0; border-bottom-color:var(--koke)}
+  .nav__ja{font-size:14px; min-width:0}
+  .pair,.side,.lanes{grid-template-columns:minmax(0,1fr)}
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .side{display:grid}
+}
+@media (max-width:640px){
+  .frame{padding:var(--s2); gap:var(--s2)}
+  .bar{flex-wrap:wrap; gap:var(--s2)}
+  .seek{order:3; flex-basis:100%; max-width:none}
+  .who{display:none}
+  .week{grid-template-columns:repeat(4,1fr); gap:var(--s2) var(--s3)}
+  .tile{aspect-ratio:auto; min-height:0}
+  .tile__v{font-size:32px}
+  .legend{display:block; line-height:2}
+  .legend .key{vertical-align:middle; margin:0 var(--s1) 0 0}
+  .legend .key--free{margin-left:var(--s3)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important; transition-duration:.01ms !important}
+}
+@media print{
+  .pillar,.bar__tools,.toast,.btn{display:none}
+  .app{display:block}
+  .card{break-inside:avoid; border-color:#999}
+}
